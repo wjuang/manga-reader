@@ -8,8 +8,8 @@ class Series(Model):
     author = CharField()
     artist = CharField()
     updated = DateTimeField(default=datetime.datetime.now)
-    chapters = IntegerField()
-    cover = CharField()
+    chapters = IntegerField(default=0, null=True)
+    cover = CharField(null=True)
     id = PrimaryKeyField()
 
     class Meta:

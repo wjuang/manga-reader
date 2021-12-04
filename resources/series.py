@@ -48,3 +48,28 @@ def single_series(id):
         message="Got one series",
         status=200
     ), 200
+
+@series.route('/<id>', methods=['PUT'])
+def update_series(id):
+    payload = request.get_json()
+
+    models.Series.update(**payload).where(models.Series.id == id).execute()
+
+    return jsonify(
+        data=model_to_dict(models.Series.get_by_id(id)),
+        message="Updated series",
+        status=200
+    ), 200
+
+@series.route('/<id>', methods=['DELETE'])
+def delete_series(id):
+    delete_query = models.Series.delete().where(models.Series.id == id)
+    nums_of_rows_deleted = delete_query.execute()
+    print(nums_of_rows_deleted)
+    #if no rows were deleted, return some message
+
+    return jsonify(
+        data={},
+        message=f"Deleted {nums_of_rows_deleted} series with id {id}",
+        status=200
+    ), 200

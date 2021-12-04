@@ -38,3 +38,13 @@ def series_post():
     }), 201
 
     return "Series added."
+
+@series.route('/<id>', methods=['GET'])
+def single_series(id):
+    series = models.Series.get_by_id(id)
+
+    return jsonify(
+        data=model_to_dict(series),
+        message="Got one series",
+        status=200
+    ), 200

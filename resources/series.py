@@ -95,6 +95,22 @@ def get_chapters(id):
 
     return "Chapter list fetched."
 
+@series.route('/<id>/<id2>', methods=['GET'])
+def get_one_chapter(id, id2):
+    result = models.Chapter.select().where((models.Chapter.series == id) & (models.Chapter.number == id2))
+    print('')
+    print('Found chapter: ')
+    print(result)
+
+    chapter_dict = [model_to_dict(chapter) for chapter in result]
+
+    return jsonify({
+    'data': chapter_dict,
+    'message': f'Successfully found {len(chapter_dict)} chapter.',
+    'status': 200
+    }), 200
+
+
 @series.route('/<id>', methods=['POST'])
 def post_chapter(id):
     payload = request.get_json()
@@ -111,3 +127,28 @@ def post_chapter(id):
     }), 201
 
     return "Chapter added."
+
+@series.route('/<id>/<id2>', methods=['DELETE'])
+def delete_chapter(id, id2):
+    delete_query = models.Chapter.delete().where((models.Chapter.number == id2) & (models.Chapter.series == id))
+    nums_of_rows_deleted = delete_query.execute()
+    print(nums_of_rows_deleted)
+    #if no rows were deleted, return some message
+
+    return jsonify(
+        data={},
+        message=f"Deleted {nums_of_rows_deleted} chapters",
+        status=200
+    ), 200
+
+@series.route('/<id>/<id2>', methods=['PUT'])
+def edit_chapter(id, id2):
+    payload = request.get_json()
+
+    models.Chapter.update(**payload).where((models.Chapter.series == id) & (models.Chapter.number == id2)).execute()
+
+    return jsonify(
+        data=model_to_dict(models.Chapter.get_by_id(id)),
+        message="Updated chapter",
+        status=200
+    ), 200

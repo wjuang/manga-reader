@@ -27,7 +27,7 @@ def series_index():
 @series.route('/', methods=['POST'])
 def series_post():
     payload = request.get_json()
-    new_series = models.Series.create(title=payload['title'], author=payload['author'], artist=payload['artist'], chapters=0, cover=payload['cover'])
+    new_series = models.Series.create(title=payload['title'], author=payload['author'], artist=payload['artist'], chaptercount=0, cover=payload['cover'])
     print(new_series)
 
     series_dict = model_to_dict(new_series)
@@ -97,7 +97,7 @@ def get_chapters(id):
 
 @series.route('/<id>/<id2>', methods=['GET'])
 def get_one_chapter(id, id2):
-    result = models.Chapter.select().where((models.Chapter.series == id) & (models.Chapter.number == id2))
+    result = models.Chapter.select().where((models.Chapter.seriesid == id) & (models.Chapter.number == id2))
     print('')
     print('Found chapter: ')
     print(result)
@@ -114,9 +114,10 @@ def get_one_chapter(id, id2):
 @series.route('/<id>', methods=['POST'])
 def post_chapter(id):
     payload = request.get_json()
-    print(payload['pages'])
-    print(type(payload['pages']))
-    new_chapter = models.Chapter.create(series=id, pagenumber=payload['pages'], number=payload['number'])
+
+    new_chapter = models.Chapter.create(seriesid=id, pagenumber=payload['pagenumber'], number=payload['number'])
+
+    models.Series.update({models.Series.chaptercount: models.Series.chaptercount + 1}).where(models.Series.id == id).execute()
 
     chapter_dict = model_to_dict(new_chapter)
 
@@ -130,10 +131,12 @@ def post_chapter(id):
 
 @series.route('/<id>/<id2>', methods=['DELETE'])
 def delete_chapter(id, id2):
-    delete_query = models.Chapter.delete().where((models.Chapter.number == id2) & (models.Chapter.series == id))
+    delete_query = models.Chapter.delete().where((models.Chapter.number == id2) & (models.Chapter.seriesid == id))
     nums_of_rows_deleted = delete_query.execute()
     print(nums_of_rows_deleted)
-    #if no rows were deleted, return some message
+
+    models.Series.update({models.Series.chaptercount: models.Series.chaptercount - 1}).where(models.Series.id == id).execute()
+
 
     return jsonify(
         data={},
@@ -145,7 +148,7 @@ def delete_chapter(id, id2):
 def edit_chapter(id, id2):
     payload = request.get_json()
 
-    models.Chapter.update(**payload).where((models.Chapter.series == id) & (models.Chapter.number == id2)).execute()
+    models.Chapter.update(**payload).where((models.Chapter.seriesid == id) & (models.Chapter.number == id2)).execute()
 
     return jsonify(
         data=model_to_dict(models.Chapter.get_by_id(id)),

@@ -18,8 +18,8 @@ class Series(Model):
 class Chapter(Model):
     series = ForeignKeyField(Series, related_name='chapters')
     uploaded = DateTimeField(default=datetime.datetime.now)
-    pages = IntegerField()
-    number = IntegerField()
+    pagenumber = IntegerField(null=True)
+    number = IntegerField(null=True)
     id = PrimaryKeyField()
 
     class Meta:

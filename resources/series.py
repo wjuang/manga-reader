@@ -5,6 +5,7 @@ from flask import Blueprint, request, jsonify
 from playhouse.shortcuts import model_to_dict
 
 series = Blueprint('series', 'series')
+chapter = Blueprint('chapter', 'chapter')
 
 @series.route('/', methods=['GET'])
 def series_index():
@@ -73,3 +74,40 @@ def delete_series(id):
         message=f"Deleted {nums_of_rows_deleted} series with id {id}",
         status=200
     ), 200
+
+
+#CHAPTER ROUTES
+
+@series.route('/<id>/chapters', methods=['GET'])
+def get_chapters(id):
+    result = models.Chapter.select().where(models.Chapter.series == id)
+    print('')
+    print('Chapters found: ')
+    print(result)
+
+    chapters_dict = [model_to_dict(chapter) for chapter in result]
+
+    return jsonify({
+    'data': chapters_dict,
+    'message': f'Successfully found {len(chapters_dict)} chapters.',
+    'status': 200
+    }), 200
+
+    return "Chapter list fetched."
+
+@series.route('/<id>', methods=['POST'])
+def post_chapter(id):
+    payload = request.get_json()
+    print(payload['pages'])
+    print(type(payload['pages']))
+    new_chapter = models.Chapter.create(series=id, pagenumber=payload['pages'], number=payload['number'])
+
+    chapter_dict = model_to_dict(new_chapter)
+
+    return jsonify({
+    'data': chapter_dict,
+    'message': 'Chapter added.',
+    'status': 201
+    }), 201
+
+    return "Chapter added."

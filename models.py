@@ -18,7 +18,7 @@ class Series(Model):
 class Chapter(Model):
     seriesid = ForeignKeyField(Series, related_name='chapters')
     uploaded = DateTimeField(default=datetime.datetime.now)
-    pagenumber = IntegerField(null=True)
+    pagenumber = IntegerField(default=0, null=True)
     number = IntegerField(null=True)
     id = PrimaryKeyField()
 
@@ -26,7 +26,8 @@ class Chapter(Model):
         database = DATABASE
 
 class Page(Model):
-    chapterid = ForeignKeyField(Chapter, related_name='pages')
+    chapternumber = IntegerField()
+    seriesid = ForeignKeyField(Series, related_name='pages')
     link = CharField()
     number = IntegerField()
 

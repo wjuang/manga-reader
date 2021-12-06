@@ -5,7 +5,6 @@ from flask import Blueprint, request, jsonify
 from playhouse.shortcuts import model_to_dict
 
 series = Blueprint('series', 'series')
-chapter = Blueprint('chapter', 'chapter')
 
 @series.route('/', methods=['GET'])
 def series_index():
@@ -155,3 +154,43 @@ def edit_chapter(id, id2):
         message="Updated chapter",
         status=200
     ), 200
+
+
+#PAGE ROUTES
+@series.route('/<id>/<id2>/pages', methods=['GET'])
+def pages_index(id, id2):
+    result = models.Page.select().where((models.Page.seriesid == id) & (models.Page.chapternumber == id2))
+    print('')
+    print('All Pages: ')
+    print(result)
+
+    pages_dict = [model_to_dict(pages) for pages in result]
+
+    return jsonify({
+    'data': pages_dict,
+    'message': f'Successfully found {len(pages_dict)} pages.',
+    'status': 200
+    }), 200
+
+    return "Pages list fetched."
+
+@series.route('/<id>/<id2>', methods = ['POST'])
+def pages_post(id, id2):
+    payload = request.get_json()
+    # current_chapter = models.Chapter.select().where((models.Chapter.seriesid == id) & (models.Chapter.number == id2))
+    # print('')
+    # print(current_chapter)
+    # print('')
+    new_page = models.Page.create(chapternumber=id2, seriesid=id, link=payload['link'], number=payload['number'])
+
+    models.Chapter.update({models.Chapter.pagenumber: models.Chapter.pagenumber + 1}).where((models.Chapter.seriesid == id) & (models.Chapter.number == id2)).execute()
+
+    page_dict = model_to_dict(new_page)
+
+    return jsonify({
+    'data': page_dict,
+    'message': 'Page added.',
+    'status': 201
+    }), 201
+
+    return "Page added."

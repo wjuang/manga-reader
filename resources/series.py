@@ -79,7 +79,7 @@ def delete_series(id):
 
 @series.route('/<id>/chapters', methods=['GET'])
 def get_chapters(id):
-    result = models.Chapter.select().where(models.Chapter.series == id)
+    result = models.Chapter.select().where(models.Chapter.seriesid == id)
     print('')
     print('Chapters found: ')
     print(result)
@@ -174,6 +174,21 @@ def pages_index(id, id2):
 
     return "Pages list fetched."
 
+@series.route('/<id>/<id2>/<id3>', methods=['GET'])
+def get_one_page(id, id2, id3):
+    result = models.Page.select().where((models.Page.seriesid == id) & (models.Page.number == id3) & (models.Page.chapternumber == id2))
+    print('')
+    print('Found page: ')
+    print(result)
+
+    page_dict = [model_to_dict(page) for page in result]
+
+    return jsonify({
+    'data': page_dict,
+    'message': f'Successfully found {len(page_dict)} page.',
+    'status': 200
+    }), 200
+
 @series.route('/<id>/<id2>', methods = ['POST'])
 def pages_post(id, id2):
     payload = request.get_json()
@@ -194,3 +209,29 @@ def pages_post(id, id2):
     }), 201
 
     return "Page added."
+
+@series.route('/<id>/<id2>/<id3>', methods=['DELETE'])
+def delete_page(id, id2, id3):
+    delete_query = models.Page.delete().where((models.Page.number == id3) & (models.Page.seriesid == id) & (models.Page.chapternumber == id2))
+    nums_of_rows_deleted = delete_query.execute()
+    print(nums_of_rows_deleted)
+
+    models.Chapter.update({models.Chapter.pagenumber: models.Chapter.pagenumber - 1}).where((models.Chapter.seriesid == id) & (models.Chapter.number == id2)).execute()
+
+    return jsonify(
+        data={},
+        message=f"Deleted {nums_of_rows_deleted} pages",
+        status=200
+    ), 200
+
+@series.route('/<id>/<id2>/<id3>', methods=['PUT'])
+def edit_page(id, id2, id3):
+    payload = request.get_json()
+
+    models.Page.update(**payload).where((models.Page.seriesid == id) & (models.Page.number == id3) & (models.Page.chapternumber == id2)).execute()
+
+    return jsonify(
+        data=model_to_dict(models.Page.get_by_id(id)),
+        message="Updated page.",
+        status=200
+    ), 200

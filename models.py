@@ -10,8 +10,8 @@ class Series(Model):
     updated = DateTimeField(default=datetime.datetime.now)
     chaptercount = IntegerField(default=0, null=True)
     cover = CharField(null=True)
+    submittedBy = CharField()
     id = PrimaryKeyField()
-    user = CharField()
 
     class Meta:
         database = DATABASE
@@ -21,8 +21,8 @@ class Chapter(Model):
     uploaded = DateTimeField(default=datetime.datetime.now)
     pagenumber = IntegerField(default=0, null=True)
     number = IntegerField(null=True)
+    submittedBy = CharField()
     id = PrimaryKeyField()
-    user = CharField()
 
     class Meta:
         database = DATABASE

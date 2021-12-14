@@ -26,7 +26,7 @@ def series_index():
 @series.route('/', methods=['POST'])
 def series_post():
     payload = request.get_json()
-    new_series = models.Series.create(title=payload['title'], author=payload['author'], artist=payload['artist'], chaptercount=0, cover=payload['cover'])
+    new_series = models.Series.create(title=payload['title'], author=payload['author'], artist=payload['artist'], chaptercount=0, cover=payload['cover'], submittedBy=payload['submittedBy'])
     print(new_series)
 
     series_dict = model_to_dict(new_series)
@@ -114,7 +114,7 @@ def get_one_chapter(id, id2):
 def post_chapter(id):
     payload = request.get_json()
 
-    new_chapter = models.Chapter.create(seriesid=id, pagenumber=payload['pagenumber'], number=payload['number'])
+    new_chapter = models.Chapter.create(seriesid=id, pagenumber=payload['pagenumber'], number=payload['number'], submittedBy=payload['submitedBy'])
 
     models.Series.update({models.Series.chaptercount: models.Series.chaptercount + 1}).where(models.Series.id == id).execute()
 

@@ -11,6 +11,7 @@ class Series(Model):
     chaptercount = IntegerField(default=0, null=True)
     cover = CharField(null=True)
     id = PrimaryKeyField()
+    user = CharField()
 
     class Meta:
         database = DATABASE
@@ -21,6 +22,7 @@ class Chapter(Model):
     pagenumber = IntegerField(default=0, null=True)
     number = IntegerField(null=True)
     id = PrimaryKeyField()
+    user = CharField()
 
     class Meta:
         database = DATABASE

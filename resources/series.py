@@ -114,7 +114,7 @@ def get_one_chapter(id, id2):
 def post_chapter(id):
     payload = request.get_json()
 
-    new_chapter = models.Chapter.create(seriesid=id, pagenumber=payload['pagenumber'], number=payload['number'], submittedBy=payload['submitedBy'])
+    new_chapter = models.Chapter.create(seriesid=id, pagenumber=payload['pagenumber'], number=payload['number'], submittedBy=payload['submittedBy'])
 
     models.Series.update({models.Series.chaptercount: models.Series.chaptercount + 1}).where(models.Series.id == id).execute()
 

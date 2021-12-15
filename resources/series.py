@@ -1,5 +1,5 @@
 import models
-
+import datetime
 from flask import Blueprint, request, jsonify
 
 from playhouse.shortcuts import model_to_dict
@@ -116,7 +116,7 @@ def post_chapter(id):
 
     new_chapter = models.Chapter.create(seriesid=id, pagenumber=payload['pagenumber'], number=payload['number'], submittedBy=payload['submittedBy'])
 
-    models.Series.update({models.Series.chaptercount: models.Series.chaptercount + 1}).where(models.Series.id == id).execute()
+    models.Series.update({models.Series.chaptercount: models.Series.chaptercount + 1, models.Series.updated: new_chapter.uploaded}).where(models.Series.id == id).execute()
 
     chapter_dict = model_to_dict(new_chapter)
 

@@ -26,7 +26,7 @@ def series_index():
 @series.route('/', methods=['POST'])
 def series_post():
     payload = request.get_json()
-    new_series = models.Series.create(title=payload['title'], author=payload['author'], artist=payload['artist'], chaptercount=0, cover=payload['cover'], submittedBy=payload['submittedBy'])
+    new_series = models.Series.create(title=payload['title'], author=payload['author'], artist=payload['artist'], description=payload['description'], chaptercount=0, cover=payload['cover'], submittedBy=payload['submittedBy'])
     print(new_series)
 
     series_dict = model_to_dict(new_series)

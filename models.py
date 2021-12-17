@@ -9,6 +9,7 @@ class Series(Model):
     title = CharField()
     author = CharField()
     artist = CharField()
+    description = CharField(null=True)
     updated = DateTimeField(default=datetime.datetime.now)
     chaptercount = IntegerField(default=0, null=True)
     cover = CharField(null=True)

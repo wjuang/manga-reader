@@ -4,7 +4,12 @@ from resources.series import series
 
 from flask_cors import CORS
 
+from dotenv import load_dotenv
+import os
+
 import models
+
+load_dotenv()
 
 DEBUG = True
 

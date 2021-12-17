@@ -1,7 +1,9 @@
 from peewee import *
 import datetime
+import os
+from playhouse.db_url import connect
 
-DATABASE = SqliteDatabase('manga.sqlite')
+DATABASE = connect(os.environ.get('DATABASE_URL') or 'sqlite:///manga.sqlite')
 
 class Series(Model):
     title = CharField()

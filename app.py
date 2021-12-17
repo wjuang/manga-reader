@@ -17,7 +17,7 @@ PORT=8000
 
 app = Flask(__name__)
 
-CORS(series, origins=['http://localhost:3000'], supports_credentials=True)
+CORS(series, origins=['http://localhost:3000', 'http://makima-reader.herokuapp.com'], supports_credentials=True)
 
 app.register_blueprint(series, url_prefix='/reader')
 
